@@ -61,7 +61,7 @@ int main() {
         switch(opc) {
             case 1: registrar(); break;
             case 2: mostrar(); break;
-            //case 3: ordenar(); break;
+            case 3: ordenar(); break;
         }
     } while(opc != 4);
     return 0;
