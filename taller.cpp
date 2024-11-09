@@ -31,6 +31,24 @@ int registrar() {
     return 0;
 }
 
+int mostrar() {
+    if (!lista_envios) {
+        cout << "No hay envios registrados." << endl;
+        return 0;
+    }
+
+    aux = lista_envios;
+    while (aux != NULL) {
+        cout << "Destinatario: " << aux->destinatario << endl;
+        cout << "Codigo de Seguimiento: " << aux->codigo_seguimiento << endl;
+        cout << "Prioridad: " << aux->prioridad << endl;
+        cout << "Destino: " << aux->destino << endl << endl;
+        aux = aux->siguiente;
+    }
+    return 0;
+}
+
+
 
 int main() {
     int opc;
@@ -42,7 +60,7 @@ int main() {
         cin >> opc;
         switch(opc) {
             case 1: registrar(); break;
-            //case 2: mostrar(); break;
+            case 2: mostrar(); break;
             //case 3: ordenar(); break;
         }
     } while(opc != 4);
