@@ -48,7 +48,51 @@ int mostrar() {
     return 0;
 }
 
+int prioridad_valor(char* prioridad) {
+    if (strcmp(prioridad, "Alta") == 0) return 1;
+    if (strcmp(prioridad, "Media") == 0) return 2;
+    return 3;
+}
 
+int destino_valor(char* destino) {
+    return strcmp(destino, "Internacional") == 0 ? 1 : 2;
+}
+
+int ordenar() {
+    if (!lista_envios || !lista_envios->siguiente) return 0;
+
+    int cambiado;
+    do {
+        cambiado = 0;
+        aux = lista_envios;
+
+        while (aux->siguiente != NULL) {
+            aux2 = aux->siguiente;
+
+            int prioridad_aux = prioridad_valor(aux->prioridad);
+            int prioridad_aux2 = prioridad_valor(aux2->prioridad);
+            int destino_aux = destino_valor(aux->destino);
+            int destino_aux2 = destino_valor(aux2->destino);
+
+            if (
+                (prioridad_aux > prioridad_aux2) ||
+                (prioridad_aux == prioridad_aux2 && destino_aux > destino_aux2) ||
+                (prioridad_aux == prioridad_aux2 && destino_aux == destino_aux2 && aux->codigo_seguimiento > aux2->codigo_seguimiento)
+            ) {
+                nodo temp = *aux;
+                *aux = *aux2;
+                *aux2 = temp;
+                aux2->siguiente = aux->siguiente;
+                aux->siguiente = aux2;
+                cambiado = 1;
+            }
+            aux = aux->siguiente;
+        }
+    } while (cambiado);
+
+    cout << "Envios ordenados exitosamente." << endl;
+    return 0;
+}
 
 int main() {
     int opc;
