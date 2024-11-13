@@ -35,7 +35,7 @@ int registrar() {
     aux = (struct nodo *)malloc(sizeof(struct nodo));
     cout << "Digite la edad del paciente: ";
     cin >> aux->edad;
-    cout << "Digite la numero_identificacion del paciente: ";
+    cout << "Digite la numero identificacion del paciente: ";
     cin >> aux->numero_identificacion;
     aux->izq = aux->der = NULL;
 
