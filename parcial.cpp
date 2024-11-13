@@ -1,5 +1,4 @@
 #include "iostream"
-
 using namespace std;
 
 struct nodo {
@@ -49,22 +48,6 @@ int registrar() {
     return 0;
 }
 
-int recorrer(nodo *a) {  
-    if(a->der!=NULL){
-        recorrer(a->der);
-    }
-    cout << "-------paciente--------" << endl;
-    cout << "numero identificacion: " << a->numero_identificacion << endl;
-    cout << "edad: " << a->edad << endl;
-
-    if(a->izq!=NULL){
-        recorrer(a->izq);
-    }
-
-    return 0;
-}
-
-
 int mostrar() {
     if (raiz != NULL) {
         recorrer(raiz); 
@@ -74,145 +57,113 @@ int mostrar() {
     return 0;
 }
 
-int ubicar(nodo *a, int aguja){
-    if(a->numero_identificacion==aguja){
-        aux2 = a;
-        return 0;
+int ubicar(nodo *a, int aguja, nodo* &padre) {
+    if (a == NULL) return 0;
+
+    if (a->numero_identificacion == aguja) {
+        aux2 = a; 
+        return 1;
+    } 
+    padre = a;
+    if (aguja < a->numero_identificacion) {
+        return ubicar(a->izq, aguja, padre);
     } else {
-        if(a->izq!=NULL){
-            ubicar(a->izq, aguja);
-        } 
-        
-        if(a->der!=NULL){
-            ubicar(a->der, aguja);
-        }         
+        return ubicar(a->der, aguja, padre);
+    }
+}
+
+int buscar(int aguja) {
+    aux2 = NULL;
+    padre = NULL;
+    if (raiz != NULL) {
+        ubicar(raiz, aguja, padre);
+    }
+    return aux2 != NULL;
+}
+
+int pedirAguja() {
+    int dato;
+    cout << "Numero de identificacion del paciente: ";
+    cin >> dato;
+    if (buscar(dato)) {
+        cout << "Paciente encontrado" << endl;
+        cout << "Numero de identificacion: " << aux2->numero_identificacion << endl;
+        cout << "Edad: " << aux2->edad << endl;
+    } else {
+        cout << "El paciente no se encontro" << endl;
     }
     return 0;
 }
 
-int buscar(int aguja){
-    aux = NULL;
-    if(raiz!=NULL){
-        aux = raiz;
-        ubicar(aux, aguja);
-    }
-}
-
-int pedirAguja(){
-    aux2 = NULL;
-    int dato;
-    cout<<"numero de identificacion del paciente"<<endl;
-    cin>>dato;
-    buscar(dato);
-    if(aux2){
-        cout<<"paciente encontrado"<<endl;
-        cout << "Numero de identificacion: " << aux2->numero_identificacion << endl;
-        cout << "Edad: " << aux2->edad << endl;
-    } else {
-        cout<<"El paciente no se encontro"<<endl;
-    }
-}
-
-int ubicarPadre(nodo *a){
-    if((a->izq==aux2)||(a->der==aux2)){
-        padre = a;
-    }
-    else {
-        if(a->izq!=NULL){
-            ubicarPadre(a->izq);
-        } 
-        
-        if(a->der!=NULL){
-            ubicarPadre(a->der);
-        }         
-    }
-}
-
-int caso_Uno(){
-    if(aux != raiz){
-        ubicarPadre(raiz);
-    }
-    if(padre != NULL) {
-        if(padre->izq == aux) {
-            padre->izq = NULL;
-        } else if(padre->der == aux) {
-            padre->der = NULL;
-        }
+int caso_Uno() {
+    if (aux2 != raiz) {
+        if (padre->izq == aux2) padre->izq = NULL;
+        else padre->der = NULL;
     } else {
         raiz = NULL;
     }
-    free(aux);
+    free(aux2);
     return 0;
 }
 
 int caso_Dos() {
-    nodo* hijo;
-    if(aux->izq != NULL) {
-        hijo = aux->izq;
-    } else {
-        hijo = aux->der;
-    }
+    nodo* hijo = (aux2->izq != NULL) ? aux2->izq : aux2->der;
 
-    if(aux == raiz) {
+    if (aux2 == raiz) {
         raiz = hijo;
     } else {
-        ubicarPadre(raiz);
-        if(padre->izq == aux) {
-            padre->izq = hijo;
-        } else {
-            padre->der = hijo;
-        }
+        if (padre->izq == aux2) padre->izq = hijo;
+        else padre->der = hijo;
     }
-    free(aux);
+    free(aux2);
     return 0;
 }
 
 nodo* encontrarMinimo(nodo* a) {
-    while(a->izq != NULL) {
+    while (a->izq != NULL) {
         a = a->izq;
     }
     return a;
 }
 
-int eliminar_sucesor(int id_sucesor) {
-    ubicar(raiz, id_sucesor);
-    if(aux2 != NULL) {
-        aux = aux2;
-        if(aux->izq == NULL && aux->der == NULL) {
-            caso_Uno();
-        } else if(aux->izq == NULL || aux->der == NULL) {
-            caso_Dos();
-        }
-    }
-    return 0;
-}
-
 int caso_Tres() {
-    nodo* sucesor = encontrarMinimo(aux->der);
+    nodo* sucesor = encontrarMinimo(aux2->der);  // Encuentra el sucesor inorden
     int edadSucesor = sucesor->edad;
     int idSucesor = sucesor->numero_identificacion;
-    eliminar_sucesor(idSucesor); 
-    aux->edad = edadSucesor; 
-    aux->numero_identificacion = idSucesor;
+
+    nodo *padreSucesor = aux2;
+    nodo *nodoActual = aux2->der;
+
+    while (nodoActual->izq != NULL) {
+        padreSucesor = nodoActual;
+        nodoActual = nodoActual->izq;
+    }
+
+    if (padreSucesor->izq == nodoActual) {
+        padreSucesor->izq = nodoActual->der;
+    } else {
+        padreSucesor->der = nodoActual->der;
+    }
+    free(nodoActual);
+
+    aux2->edad = edadSucesor;
+    aux2->numero_identificacion = idSucesor;
     return 0;
 }
 
 int eliminar_nodo() {
     int buscarId;
-    cout<<"numero de identificacion del paciente"<<endl;
-    cin>>buscarId;    
-    ubicar(raiz, buscarId);
+    cout << "Numero de identificacion del paciente: ";
+    cin >> buscarId;
 
-    if(aux2 == NULL) {
+    if (!buscar(buscarId)) {
         cout << "Paciente no encontrado." << endl;
         return 0;
     }
 
-    aux = aux2;
-
-    if(aux->izq == NULL && aux->der == NULL) {
+    if (aux2->izq == NULL && aux2->der == NULL) {
         caso_Uno();
-    } else if(aux->izq == NULL || aux->der == NULL) {
+    } else if (aux2->izq == NULL || aux2->der == NULL) {
         caso_Dos();
     } else {
         caso_Tres();
@@ -224,10 +175,10 @@ int main() {
     int opc;
     do {
         cout << "1. Registrar" << endl
-            << "2. Mostrar" << endl
-            << "3. buscar paciente" << endl
-            << "4. eliminar paciente" << endl
-            << "6. salir" << endl;
+             << "2. Mostrar" << endl
+             << "3. Buscar paciente" << endl
+             << "4. Eliminar paciente" << endl
+             << "6. Salir" << endl;
         cin >> opc;
         switch (opc) {
             case 1: registrar(); break;
