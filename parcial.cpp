@@ -8,7 +8,7 @@ struct nodo {
     nodo *der;
 };
 
-struct nodo *raiz = NULL, *aux, *aux2 , *padre;
+struct nodo *raiz = NULL, *aux, *aux2, *padre;
 
 int posicionar() {
     if (aux->edad < aux2->edad) {
@@ -81,7 +81,7 @@ int buscar(int aguja) {
     return aux2 != NULL;
 }
 
-int pedirAguja() {
+int pedir_aguja() {
     int dato;
     cout << "Numero de identificacion del paciente: ";
     cin >> dato;
@@ -95,7 +95,7 @@ int pedirAguja() {
     return 0;
 }
 
-int caso_Uno() {
+int caso_uno() {
     if (aux2 != raiz) {
         if (padre->izq == aux2) padre->izq = NULL;
         else padre->der = NULL;
@@ -106,7 +106,7 @@ int caso_Uno() {
     return 0;
 }
 
-int caso_Dos() {
+int caso_dos() {
     nodo* hijo = (aux2->izq != NULL) ? aux2->izq : aux2->der;
 
     if (aux2 == raiz) {
@@ -119,54 +119,54 @@ int caso_Dos() {
     return 0;
 }
 
-nodo* encontrarMinimo(nodo* a) {
+nodo* encontrar_minimo(nodo* a) {
     while (a->izq != NULL) {
         a = a->izq;
     }
     return a;
 }
 
-int caso_Tres() {
-    nodo* sucesor = encontrarMinimo(aux2->der);  // Encuentra el sucesor inorden
-    int edadSucesor = sucesor->edad;
-    int idSucesor = sucesor->numero_identificacion;
+int caso_tres() {
+    nodo* sucesor = encontrar_minimo(aux2->der);
+    int edad_sucesor = sucesor->edad;
+    int id_sucesor = sucesor->numero_identificacion;
 
-    nodo *padreSucesor = aux2;
-    nodo *nodoActual = aux2->der;
+    nodo *padre_sucesor = aux2;
+    nodo *nodo_actual = aux2->der;
 
-    while (nodoActual->izq != NULL) {
-        padreSucesor = nodoActual;
-        nodoActual = nodoActual->izq;
+    while (nodo_actual->izq != NULL) {
+        padre_sucesor = nodo_actual;
+        nodo_actual = nodo_actual->izq;
     }
 
-    if (padreSucesor->izq == nodoActual) {
-        padreSucesor->izq = nodoActual->der;
+    if (padre_sucesor->izq == nodo_actual) {
+        padre_sucesor->izq = nodo_actual->der;
     } else {
-        padreSucesor->der = nodoActual->der;
+        padre_sucesor->der = nodo_actual->der;
     }
-    free(nodoActual);
+    free(nodo_actual);
 
-    aux2->edad = edadSucesor;
-    aux2->numero_identificacion = idSucesor;
+    aux2->edad = edad_sucesor;
+    aux2->numero_identificacion = id_sucesor;
     return 0;
 }
 
 int eliminar_nodo() {
-    int buscarId;
+    int buscar_id;
     cout << "Numero de identificacion del paciente: ";
-    cin >> buscarId;
+    cin >> buscar_id;
 
-    if (!buscar(buscarId)) {
+    if (!buscar(buscar_id)) {
         cout << "Paciente no encontrado." << endl;
         return 0;
     }
 
     if (aux2->izq == NULL && aux2->der == NULL) {
-        caso_Uno();
+        caso_uno();
     } else if (aux2->izq == NULL || aux2->der == NULL) {
-        caso_Dos();
+        caso_dos();
     } else {
-        caso_Tres();
+        caso_tres();
     }
     return 0;
 }
@@ -175,17 +175,17 @@ int main() {
     int opc;
     do {
         cout << "1. Registrar" << endl
-             << "2. Mostrar" << endl
-             << "3. Buscar paciente" << endl
-             << "4. Eliminar paciente" << endl
-             << "6. Salir" << endl;
+            << "2. Mostrar" << endl
+            << "3. Buscar paciente" << endl
+            << "4. Eliminar paciente" << endl
+            << "5. Salir" << endl;
         cin >> opc;
         switch (opc) {
             case 1: registrar(); break;
             case 2: mostrar(); break;
-            case 3: pedirAguja(); break;
+            case 3: pedir_aguja(); break;
             case 4: eliminar_nodo(); break;
         }
-    } while (opc != 6);
+    } while (opc != 5);
     return 0;
 }
