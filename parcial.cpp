@@ -64,23 +64,10 @@ int recorrer(nodo *a) {
     return 0;
 }
 
-void mostrar_arbol(nodo* a, int espacio) {
-    if (a == NULL) return;
-
-    espacio += 5;
-
-    mostrar_arbol(a->der, espacio);
-
-    cout << endl;
-    for (int i = 5; i < espacio; i++) cout << " ";
-    cout << "Edad: " << a->edad << ", ID: " << a->numero_identificacion << endl;
-
-    mostrar_arbol(a->izq, espacio);
-}
 
 int mostrar() {
     if (raiz != NULL) {
-        mostrar_arbol(raiz, 0);
+        recorrer(raiz); 
     } else {
         cout << "No hay pacientes registrados." << endl;
     }
