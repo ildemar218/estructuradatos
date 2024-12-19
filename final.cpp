@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdlib> // Para malloc y free
+#include <cstdlib>
 using namespace std;
 
 struct nodo {
@@ -66,7 +66,7 @@ struct nodo *rotacion_izquierda(struct nodo *x) {
     return y; // Nueva raiz
 }
 
-struct nodo *insertar(struct nodo *n) {
+void insertar(struct nodo *&n) {  
     int valor;
     cout << "Valor a insertar: ";
     cin >> valor;
@@ -78,16 +78,17 @@ struct nodo *insertar(struct nodo *n) {
         nuevo->peso = 1;
         nuevo->equilibrio = 0;
         nuevo->izq = nuevo->der = NULL;
-        return nuevo;
+        n = nuevo;
+        return;
     }
 
     if (valor < n->valor) {
-        n->izq = insertar(n->izq);
+        insertar(n->izq);
     } else if (valor > n->valor) {
-        n->der = insertar(n->der);
+        insertar(n->der);
     } else {
         cout << "Valor duplicado, no se puede insertar." << endl;
-        return n; // No se permiten duplicados
+        return; 
     }
 
     // Actualizar la altura, peso y equilibrio del nodo actual
@@ -98,27 +99,25 @@ struct nodo *insertar(struct nodo *n) {
     // Rotaciones
     if (n->equilibrio > 1 && valor < n->izq->valor) {
         cout << "Rotacion derecha realizada." << endl;
-        return rotacion_derecha(n);
+        n = rotacion_derecha(n);
     }
 
     if (n->equilibrio < -1 && valor > n->der->valor) {
         cout << "Rotacion izquierda realizada." << endl;
-        return rotacion_izquierda(n);
+        n = rotacion_izquierda(n);
     }
 
     if (n->equilibrio > 1 && valor > n->izq->valor) {
         cout << "Rotacion doble derecha realizada." << endl;
         n->izq = rotacion_izquierda(n->izq);
-        return rotacion_derecha(n);
+        n = rotacion_derecha(n);
     }
 
     if (n->equilibrio < -1 && valor < n->der->valor) {
         cout << "Rotacion doble izquierda realizada." << endl;
         n->der = rotacion_derecha(n->der);
-        return rotacion_izquierda(n);
+        n = rotacion_izquierda(n);
     }
-
-    return n; // Nodo sin cambios
 }
 
 struct nodo *encontrar_minimo(struct nodo *n) {
@@ -128,21 +127,21 @@ struct nodo *encontrar_minimo(struct nodo *n) {
     return n;
 }
 
-struct nodo *eliminar(struct nodo *n) {
+void eliminar(struct nodo *&n) {  
     int valor;
     cout << "Valor a eliminar: ";
     cin >> valor;
 
     if (n == NULL) {
         cout << "Nodo no encontrado." << endl;
-        return n;
+        return;
     }
 
     // Buscar el valor a eliminar
     if (valor < n->valor) {
-        n->izq = eliminar(n->izq); // Llamada recursiva para el subárbol izquierdo
+        eliminar(n->izq); // Llamada recursiva para el subárbol izquierdo
     } else if (valor > n->valor) {
-        n->der = eliminar(n->der); // Llamada recursiva para el subárbol derecho
+        eliminar(n->der); // Llamada recursiva para el subárbol derecho
     } else {
         // Si el valor se encuentra en el nodo actual
         if (n->izq == NULL || n->der == NULL) {
@@ -156,13 +155,13 @@ struct nodo *eliminar(struct nodo *n) {
             }
             free(temp);
         } else {
-            struct nodo *temp = encontrar_minimo(n->der); // Encontrar el mínimo en el subárbol derecho
+            struct nodo *temp = encontrar_minimo(n->der); // Encontrar el mini en el subárbol derecho
             n->valor = temp->valor; // Copiar el valor del mínimo
-            n->der = eliminar(n->der); // Eliminar el nodo mínimo
+            eliminar(n->der); // Eliminar el nodo mínimo
         }
     }
 
-    if (n == NULL) return n;
+    if (n == NULL) return;
 
     // Actualizar las propiedades del nodo después de la eliminación
     n->altura = 1 + max(altura(n->izq), altura(n->der));
@@ -172,27 +171,25 @@ struct nodo *eliminar(struct nodo *n) {
     // Verificar si el árbol está desequilibrado y realizar rotaciones
     if (n->equilibrio > 1 && factor_equilibrio(n->izq) >= 0) {
         cout << "Rotacion derecha realizada." << endl;
-        return rotacion_derecha(n);
+        n = rotacion_derecha(n);
     }
 
     if (n->equilibrio > 1 && factor_equilibrio(n->izq) < 0) {
         cout << "Rotacion doble derecha realizada." << endl;
         n->izq = rotacion_izquierda(n->izq);
-        return rotacion_derecha(n);
+        n = rotacion_derecha(n);
     }
 
     if (n->equilibrio < -1 && factor_equilibrio(n->der) <= 0) {
         cout << "Rotacion izquierda realizada." << endl;
-        return rotacion_izquierda(n);
+        n = rotacion_izquierda(n);
     }
 
     if (n->equilibrio < -1 && factor_equilibrio(n->der) > 0) {
         cout << "Rotacion doble izquierda realizada." << endl;
         n->der = rotacion_derecha(n->der);
-        return rotacion_izquierda(n);
+        n = rotacion_izquierda(n);
     }
-
-    return n;
 }
 
 void recorrer(struct nodo *n) {
@@ -224,11 +221,11 @@ int main() {
 
         switch (opcion) {
             case 1:
-                raiz = insertar(raiz);
+                insertar(raiz);  
                 break;
 
             case 2:
-                raiz = eliminar(raiz);
+                eliminar(raiz); 
                 break;
 
             case 3:
