@@ -97,23 +97,23 @@ void insertar(struct nodo *&n) {
     n->equilibrio = factor_equilibrio(n);
 
     // Rotaciones
-    if (n->equilibrio > 1 && valor < n->izq->valor) {
+    if (n->equilibrio > 1 and valor < n->izq->valor) {
         cout << "Rotacion derecha realizada." << endl;
         n = rotacion_derecha(n);
     }
 
-    if (n->equilibrio < -1 && valor > n->der->valor) {
+    if (n->equilibrio < -1 and valor > n->der->valor) {
         cout << "Rotacion izquierda realizada." << endl;
         n = rotacion_izquierda(n);
     }
 
-    if (n->equilibrio > 1 && valor > n->izq->valor) {
+    if (n->equilibrio > 1 and valor > n->izq->valor) {
         cout << "Rotacion doble derecha realizada." << endl;
         n->izq = rotacion_izquierda(n->izq);
         n = rotacion_derecha(n);
     }
 
-    if (n->equilibrio < -1 && valor < n->der->valor) {
+    if (n->equilibrio < -1 and valor < n->der->valor) {
         cout << "Rotacion doble izquierda realizada." << endl;
         n->der = rotacion_derecha(n->der);
         n = rotacion_izquierda(n);
@@ -144,7 +144,7 @@ void eliminar(struct nodo *&n) {
         eliminar(n->der); // Llamada recursiva para el subárbol derecho
     } else {
         // Si el valor se encuentra en el nodo actual
-        if (n->izq == NULL || n->der == NULL) {
+        if (n->izq == NULL or n->der == NULL) {
             struct nodo *temp = (n->izq) ? n->izq : n->der; // Si tiene un hijo o está vacío
 
             if (temp == NULL) {
@@ -169,23 +169,23 @@ void eliminar(struct nodo *&n) {
     n->equilibrio = factor_equilibrio(n);
 
     // Verificar si el árbol está desequilibrado y realizar rotaciones
-    if (n->equilibrio > 1 && factor_equilibrio(n->izq) >= 0) {
+    if (n->equilibrio > 1 and factor_equilibrio(n->izq) >= 0) {
         cout << "Rotacion derecha realizada." << endl;
         n = rotacion_derecha(n);
     }
 
-    if (n->equilibrio > 1 && factor_equilibrio(n->izq) < 0) {
+    if (n->equilibrio > 1 and factor_equilibrio(n->izq) < 0) {
         cout << "Rotacion doble derecha realizada." << endl;
         n->izq = rotacion_izquierda(n->izq);
         n = rotacion_derecha(n);
     }
 
-    if (n->equilibrio < -1 && factor_equilibrio(n->der) <= 0) {
+    if (n->equilibrio < -1 and factor_equilibrio(n->der) <= 0) {
         cout << "Rotacion izquierda realizada." << endl;
         n = rotacion_izquierda(n);
     }
 
-    if (n->equilibrio < -1 && factor_equilibrio(n->der) > 0) {
+    if (n->equilibrio < -1 and factor_equilibrio(n->der) > 0) {
         cout << "Rotacion doble izquierda realizada." << endl;
         n->der = rotacion_derecha(n->der);
         n = rotacion_izquierda(n);
